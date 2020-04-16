@@ -1,5 +1,6 @@
 package ro.siit;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 
@@ -20,43 +21,59 @@ public class AppTest
      * Rigorous Test :-)
      */
     @Test
-    public void Test() {
-        try(BufferedReader in = new BufferedReader(new FileReader("resources" + File.separator + "inputFile.csv"));
-            PrintWriter out = new PrintWriter("resources" + File.separator + "outputFile.csv")) {
+    public void Test1() {
+        String input = "11,Umar Jorgson,SK,30:27,xxxox,xxxxx,xxoxo";
+        String[] splitInput = input.split(",");
+        BiathlonAthlete biathlonAthlete = new BiathlonAthlete(splitInput[0],splitInput[1],splitInput[2],splitInput[3],splitInput[4],splitInput[5],splitInput[6]);
+        int result = biathlonAthlete.numbersOfO();
+        assertEquals(3,result,0);
+    }
 
-            List<BiathlonAthlete> biathlonAthleteList = new ArrayList<>();
-            Set<BiathlonAthlete> biathlonAthleteListSorted = new TreeSet<>(new ComparatorAtheteTime());
-            BiathlonAthlete biathlonAthlete;
-            String[] lines;
-            String line;
-            String[] places = {"Winner", "Runner-up", "Third Place"};
+    @Test
+    public void Test2() {
+        String input = "11,Umar Jorgson,SK,30:27,xxxox,xxxxx,xxoxo";
+        String[] splitInput = input.split(",");
+        
+        BiathlonAthlete biathlonAthlete = new BiathlonAthlete(splitInput[0],splitInput[1],splitInput[2],splitInput[3],splitInput[4],splitInput[5],splitInput[6]);
+        biathlonAthlete.changeTime(biathlonAthlete.numbersOfO()*10);
+        String result = biathlonAthlete.getSkiTimeResult();
 
-            while((line = in.readLine()) != null){
-                lines = line.split(",");
-                biathlonAthlete = new BiathlonAthlete(lines[0],lines[1],lines[2],lines[3],lines[4],lines[5],lines[6]);
-                biathlonAthleteList.add(biathlonAthlete);
+        assertTrue(result.equals("0:30:57"));
+    }
 
-            }
+    @Test(expected = IllegalArgumentException.class)
+    public void ExceptionTest3(){
+        String input = "11,Umar Jorgson,SK,30:27,xxxox,xxmxx,xxoxo";
+        BiathlonAthlete.validateInput(input);
+    }
 
-            for(BiathlonAthlete biathlonAthlete1: biathlonAthleteList){
-                biathlonAthlete1.changeTime(biathlonAthlete1.numbersOfO());
-                biathlonAthleteListSorted.add(biathlonAthlete1);
-            }
+    @Test(expected = IllegalArgumentException.class)
+    public void ExceptionTest4(){
+        String input = "1b1,Umar Jorgson,SK,30:27,xxoxx,xxxxo,xxoxo";
+        BiathlonAthlete.validateInput(input);
+    }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void ExceptionTest5(){
+        String input = "1b1,Umar Jorgson,SK,3c0:27,xxoxx,xxxxo,xxoxo";
+        BiathlonAthlete.validateInput(input);
+    }
 
-            int i=0;
+    @Test(expected = IllegalArgumentException.class)
+    public void ExceptionTest6(){
+        String input = "11,Umar Jorgson,SK,3c0:27,xxoxx,xxxxoxxoxo";
+        BiathlonAthlete.validateInput(input);
+    }
 
-            for(BiathlonAthlete biathlonAthlete1: biathlonAthleteListSorted){
-                line = places[i++] + " - " + biathlonAthlete1.getName() + " " + biathlonAthlete1.getSkiTimeResult() + " (" + biathlonAthlete1.getAnteriorSkiTimeResult() + " + " + biathlonAthlete1.numbersOfO()*10 + ")";
-                out.write(line + "\n");
-                System.out.println(line);
-                if(i==3)
-                    break;
-            }
+    @Test(expected = IllegalArgumentException.class)
+    public void ExceptionTest7(){
+        String input = "11,Umar Jorgson,SK,30:27,xxoxx,xxxx0,xxoxo";
+        BiathlonAthlete.validateInput(input);
+    }
 
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    @Test(expected = IllegalArgumentException.class)
+    public void ExceptionTest8(){
+        String input = "11,Umar Jorgson,SK,30:27,xxoxx,xxoxx0,xxoxo";
+        BiathlonAthlete.validateInput(input);
     }
 }

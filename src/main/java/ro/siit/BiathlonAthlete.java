@@ -1,6 +1,9 @@
 package ro.siit;
 
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 import static java.lang.Integer.parseInt;
 
 public class BiathlonAthlete {
@@ -59,24 +62,62 @@ public class BiathlonAthlete {
     public void changeTime(int n){
         anteriorSkiTimeResult = skiTimeResult;
         String[] score = skiTimeResult.split(":");
-        int sec = parseInt(score[1]);
-        int min = parseInt(score[0]);
 
-        sec+=n*10;
-        if(sec>=60 && sec<120){
-            sec-=60;
-            min++;
+        GregorianCalendar gregorianCalendar = new GregorianCalendar();
+        if(score.length==2){
+            gregorianCalendar.set(Calendar.HOUR,0);
+            gregorianCalendar.set(Calendar.MINUTE,Integer.parseInt(score[0]));
+            gregorianCalendar.set(Calendar.SECOND,Integer.parseInt(score[1]));
         }
-        if(sec>=120 && sec<180){
-            sec-=120;
-            min+=2;
-        }
-        if(sec>=180 && sec<210){
-            sec-=180;
-            min+=3;
+        else {
+            gregorianCalendar.set(Calendar.HOUR,Integer.parseInt(score[0]));
+            gregorianCalendar.set(Calendar.MINUTE,Integer.parseInt(score[1]));
+            gregorianCalendar.set(Calendar.SECOND,Integer.parseInt(score[2]));
         }
 
-        this.skiTimeResult = min + ":" + sec;
+        gregorianCalendar.add(Calendar.SECOND,n);
+        int h = gregorianCalendar.get(Calendar.HOUR);
+        int min = gregorianCalendar.get(Calendar.MINUTE);
+        int sec = gregorianCalendar.get(Calendar.SECOND);
+
+        this.skiTimeResult = h + ":" + min + ":" + sec;
+    }
+
+    public static void validateInput(String input) throws IllegalArgumentException{
+        String[] splitInput = input.split(",");
+        if(splitInput.length != 7){
+            System.out.println("Wrong input!");
+            throw new IllegalArgumentException("Wrong input!");
+        }
+
+        if(Integer.parseInt(splitInput[0])<0){
+            System.out.println("Wrong input! On the first pozition have to be a number!");
+            throw new IllegalArgumentException("Wrong input! On the first pozition have to be a number!");
+        }
+
+        String time = splitInput[3];
+        String[] splitTime = time.split(":");
+        for(int i=0; i<splitTime.length; i++) {
+            if (Integer.parseInt(splitTime[i]) < 0) {
+                System.out.println("Wrong input! Time is not correct!");
+                throw new IllegalArgumentException("Wrong input! Time is not correct!");
+            }
+        }
+
+        if(splitInput[4].length()!=5 || splitInput[5].length()!= 5 || splitInput[6].length()!=5){
+            System.out.println("Wrong input! Incorrect shooting range1!");
+            throw new IllegalArgumentException("Wrong input! Incorrect shooting range!");
+        }
+
+
+        for(int i=0; i<splitInput[4].length(); i++){
+            if((splitInput[4].charAt(i)!='x' && splitInput[4].charAt(i)!='o') ||
+                    (splitInput[5].charAt(i)!='x' && splitInput[5].charAt(i)!='o') ||
+                    (splitInput[6].charAt(i)!='x' && splitInput[6].charAt(i)!='o')){
+                System.out.println("Wrong input! Incorrect shooting range2!");
+                throw new IllegalArgumentException("Wrong input! Incorrect shooting range!");
+            }
+        }
     }
 
     @Override
